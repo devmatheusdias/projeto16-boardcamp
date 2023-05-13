@@ -2,10 +2,16 @@
 // import {db} from '../database/database.js'
 
 
-export async function listGames(req, res){
+export async function listGames(req, res){ 
     res.send('ok');
 }
 
 export async function insertGame(req,res){
-   res.send('ok')
+   const {name, image, stockTotal, pricePerDay} = req.body;
+
+   try {
+        res.send(`name: ${name} | image: ${image} | stockTotal: ${stockTotal} | pricePerDay: ${pricePerDay}`)
+   } catch (err) {
+        res.send(err.message)
+   }
 }

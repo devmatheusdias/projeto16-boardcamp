@@ -1,0 +1,16 @@
+ var url = 'http:/'
+ var valid = false
+ try {
+   new URL(url)
+   valid = true
+ } catch(err) {}
+
+console.log(valid) // false
+ var url = 'protocol:/'
+ var valid = false
+ try {
+   new URL(url)
+   valid = true
+ } catch(err) {}
+
+console.log(valid) // true
