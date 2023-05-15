@@ -30,7 +30,7 @@ export async function findCustomer(req, res) {
             return {...customer, birthday: dayjs(customer.birthday).format('YYYY-MM-DD')}
         });
 
-        res.send(customersFilter)
+        res.send(customersFilter[0])
     } catch (error) {
         res.send(error.message)
     }
