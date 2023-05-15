@@ -7,7 +7,11 @@ export async function listCustomers(req, res) {
     try {
         const customers = await db.query("SELECT * FROM customers");
 
-        res.send(customers.rows);
+        const customersFilter = customers.rows.map(customer => {
+            return {...customer, birthday: dayjs(customer.birthday).format('YYYY-MM-DD')}
+        });
+        
+        res.send(customersFilter);
 
     } catch (err) {
         res.status(500).send(err.message)
@@ -36,8 +40,8 @@ export async function findCustomer(req, res) {
 export async function insertCustomer(req, res) {
     const { name, phone, cpf, birthday } = req.body;
 
-    // Verificar se os dados foram informados corretamente
-    if (!name || name.trim().length === 0 || !phone || !/^\d{10,11}$/.test(phone) || !cpf || !/^\d{11}$/.test(cpf) || !birthday || isNaN(Date.parse(birthday))) {
+    if (!name || name.trim().length === 0 || !phone || !/^\d{10,11}$/.test(phone) || !cpf || !/^\d{11}$/.test(cpf) || !birthday || 
+    isNaN(Date.parse(birthday))) {
         return res.status(400).send();
     }
 
