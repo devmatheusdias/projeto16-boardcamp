@@ -43,11 +43,12 @@ export async function insertCustomer(req, res) {
 
     const customer = await db.query(`SELECT * FROM customers WHERE cpf=$1;`, [cpf]);
 
-    if (customer.rows.length === 0) return res.status(404).send('Cliente não encontrado')
+    if (customer.rows.length != 0) return res.status(409).send('CPF já cadastrado')
 
 
     // Inserir o novo cliente no banco de dados
     db.query(`INSERT INTO customers ("name", "phone", "cpf", "birthday") VALUES ('${name}', '${phone}', '${cpf}', '${birthday}')`)
+    
     return res.status(201).send('ok');
 }
 
