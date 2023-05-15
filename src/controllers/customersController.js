@@ -7,11 +7,7 @@ export async function listCustomers(req, res) {
     try {
         const customers = await db.query("SELECT * FROM customers");
         
-        const customerObject = [...customers.rows]
-
-        customerObject.map(customer => customer.birthday = dayjs(customer.birthday).format('YYYY-MM-DD'))
-
-        res.send(customerObject);   
+        res.send(customers.rows);   
 
     } catch (err) {
         res.status(500).send(err.message)
@@ -26,11 +22,11 @@ export async function findCustomer(req, res) {
 
         if (customer.rows.length === 0) return res.status(404).send('Cliente não encontrado')
 
-        const customerObject = [...customer.rows]
+        // const customerObject = [...customer.rows]
 
-        customerObject.map(customer => customer.birthday = dayjs(customer.birthday).format('YYYY-MM-DD'))
+        // customerObject.map(customer => customer.birthday = dayjs(customer.birthday).format('YYYY-MM-DD'))
 
-        res.send(customerObject)
+        res.send(customer.rows[0])
     } catch (error) {
         res.send(error.message)
     }
@@ -40,21 +36,21 @@ export async function findCustomer(req, res) {
 export async function insertCustomer(req, res) {
     const { name, phone, cpf, birthday } = req.body;
 
-    // const dateBirthday = dayjs(birthday).format('DD/MM/YYYY');
+   const dateBirthday = dayjs(birthday).format('DD/MM/YYYY');
 
     // 
     try {
 
-        const customer = await db.query(`SELECT * FROM customers WHERE cpf=$1;`, [cpf]);
+        // const customer = await db.query(`SELECT * FROM customers WHERE cpf=$1;`, [cpf]);
 
         if (customer.rows.length != 0) return res.status(409).send('Este CPF ja está cadastrado')
 
         db.query(
             `INSERT INTO customers (name, cpf, birthday, phone)
-             VALUES ('${name}', '${cpf}', '${birthday}', '${phone}')`,
+             VALUES ('${name}', '${cpf}', '${Object(dateBirthday)}', '${phone}')`,
         )
 
-        return res.status(201).send(birthday)
+        return res.status(201).send('ok!')
 
     } catch (err) {
         res.send(err.message)
