@@ -65,13 +65,11 @@ export async function updateCustomer(req, res) {
 
         if (customer.rows.length === 0) return res.status(409).send('Cliente não encontrado')
 
-        db.query(`UPDATE customers SET name='${name}', phone='${phone}',birthday='${birthday}' WHERE id=$1;`, [id])
-
         const cpfConsult = await db.query(`SELECT * FROM customers WHERE cpf=$1;`, [cpf]);
 
         if (cpfConsult.rows.length != 0) return res.status(409).send('Este CPF ja está cadastrado')
 
-        db.query(`UPDATE customers SET cpf='${cpf}' WHERE id=$1;`, [id])
+        db.query(`UPDATE customers SET name='${name}', cpf='${cpf}', phone='${phone}',birthday='${birthday}' WHERE id=$1;`, [id])
 
         return res.status(200).send('ok!')
 
