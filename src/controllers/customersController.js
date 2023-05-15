@@ -2,9 +2,17 @@ import { db } from '../database/database.connection.js';
 import dayjs from 'dayjs';
 
 export async function listCustomers(req, res) {
+
+
     try {
         const customers = await db.query("SELECT * FROM customers");
-        res.send(customers.rows);
+        
+        const customerObject = [...customers.rows]
+
+        customerObject.map(customer => customer.birthday = dayjs(customer.birthday).format('YYYY-MM-DD'))
+
+        res.send(customerObject);   
+
     } catch (err) {
         res.status(500).send(err.message)
     }
