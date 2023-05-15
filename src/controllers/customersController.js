@@ -6,8 +6,8 @@ export async function listCustomers(req, res) {
 
     try {
         const customers = await db.query("SELECT * FROM customers");
-        
-        res.send(customers.rows);   
+
+        res.send(customers.rows);
 
     } catch (err) {
         res.status(500).send(err.message)
@@ -36,30 +36,24 @@ export async function findCustomer(req, res) {
 export async function insertCustomer(req, res) {
     const { name, phone, cpf, birthday } = req.body;
 
-   const dateBirthday = dayjs(birthday).format('DD/MM/YYYY');
-
-    // 
-    try {
-
-        const customer = await db.query(`SELECT * FROM customers WHERE cpf=$1;`, [cpf]);
-
-        if (customer.rows.length != 0) return res.status(409).send('Este CPF ja está cadastrado')
-
-        db.query(
-            `INSERT INTO customers (name, cpf, birthday, phone)
-             VALUES ('${name}', '${cpf}', '${Object(dateBirthday)}', '${phone}')`,
-        )
-
-        return res.status(201).send('ok!')
-
-    } catch (err) {
-        res.send(err.message)
+    // Verificar se os dados foram informados corretamente
+    if (!name || name.trim().length === 0 || !phone || !/^\d{10,11}$/.test(phone) || !cpf || !/^\d{11}$/.test(cpf) || !birthday || isNaN(Date.parse(birthday))) {
+        return res.status(400).send();
     }
+
+    const customer = await db.query(`SELECT * FROM customers WHERE cpf=$1;`, [cpf]);
+
+    if (customer.rows.length === 0) return res.status(404).send('Cliente não encontrado')
+
+
+    // Inserir o novo cliente no banco de dados
+    db.query(`INSERT INTO customers ("name", "phone", "cpf", "birthday") VALUES ('${name}', '${phone}', '${cpf}', '${birthday}')`)
+    return res.status(201).send('ok');
 }
 
 export async function updateCustomer(req, res) {
     const { name, phone, cpf, birthday } = req.body;
-    const {id} = req.params;
+    const { id } = req.params;
 
     try {
         const customer = await db.query(`SELECT * FROM customers WHERE id=$1;`, [id]);
