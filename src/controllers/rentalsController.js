@@ -3,12 +3,12 @@ import dayjs from 'dayjs';
 
 
 export async function listRentals(req, res){
-    // try {
-    //     const rentals = await db.query("SELECT * FROM rentals");
-    //     res.send(rentals.rows);
-    // } catch (err) {
-    //     res.status(500).send(err.message)
-    // }
+    try {
+        const rentals = await db.query("SELECT * FROM rentals");
+        res.send(rentals.rows);
+    } catch (err) {
+        res.status(500).send(err.message)
+    }
 }
 
 export async function insertRentals(req,res){
