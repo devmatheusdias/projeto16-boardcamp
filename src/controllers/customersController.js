@@ -41,7 +41,7 @@ export async function insertCustomer(req, res) {
     // 
     try {
 
-        // const customer = await db.query(`SELECT * FROM customers WHERE cpf=$1;`, [cpf]);
+        const customer = await db.query(`SELECT * FROM customers WHERE cpf=$1;`, [cpf]);
 
         if (customer.rows.length != 0) return res.status(409).send('Este CPF ja está cadastrado')
 
