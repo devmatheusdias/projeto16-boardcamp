@@ -1,4 +1,5 @@
 import {db} from '../database/database.connection.js'
+import dayjs from 'dayjs';
 
 
 export async function listRentals(req, res){
@@ -11,22 +12,26 @@ export async function listRentals(req, res){
 }
 
 export async function insertRentals(req,res){
-    const { name, phone, cpf, birthday } = req.body;
-
-    const dateBirthday = dayjs(birthday).format('DD/MM/YYYY');
+    const { customerId, gameId, daysRented } = req.body;
 
     // 
     try {
-        const customers = await db.query("SELECT (cpf) FROM customers");
 
-        const customerExists = customers.rows.find(customer => customer.cpf === cpf)
+        const rentDate = dayjs(Date.now())
 
-        if(customerExists) return res.status(409).send('Este CPF ja esta cadastrado');
+        const customers = await db.query(`SELECT * FROM customers WHERE id=$1;`, [customerId]);
+        const games = await db.query(`SELECT * FROM games WHERE id=$1;`, [gameId]);
 
-        db.query(
-            `INSERT INTO customers (name, phone, cpf, birthday)
-             VALUES ('${name}', '${phone}', '${cpf}', '${dateBirthday}')`, 
-        )
+        if (customers.rows.length === 0) return res.status(400).send('Cliente não encontrado')
+
+        if (games.rows.length === 0) return res.status(400).send('Jogo não encontrado')
+
+        db.query(`
+            INSERT INTO rentals
+            ("customerId", "gameId", "rentDate", "daysRented", "returnDate", "originalPrice", "delayFee") 
+            VALUES
+            ('${customerId}', '${gameId}', '${rentDate}', '${daysRented}', null, '${daysRented * games.rows[0].pricePerDay}', null)
+        `)
 
         return res.status(201).send('ok!')
 
@@ -44,9 +49,22 @@ export async function finalizeRentals(req, res){
 }
 
 export async function deleteRentals(req,res){
-    try{
-        res.send('ok')
-    }catch(err){
-        res.send(console.log(err.message))
+    const {id} = req.params;
+
+    try {
+        const rentals = await db.query("SELECT * FROM rentals WHERE id=$1;", [id]);
+
+        if(rentals.rows.length === 0) return res.status(404).send('Este alugel não existe')
+
+        if(rentals.rows[0].returnDate != null) res.status(400).send('Aluguel finalizado')
+
+        db.query(
+            `DELETE FROM rentals WHERE id=$1;`,[id], 
+        )
+
+       return res.status(201).send('Aluguel deletado!')
+
+    } catch (err) {
+        res.send(err.message)
     }
 }

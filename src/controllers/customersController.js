@@ -66,6 +66,7 @@ export async function updateCustomer(req, res) {
 
         db.query(`UPDATE customers SET cpf='${cpf}' WHERE id=$1;`, [id])
 
+
         return res.status(200).send(cpfConsult.rows[0].cpf)
     } catch (err) {
         res.send(err.message)
