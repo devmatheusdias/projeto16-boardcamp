@@ -28,7 +28,7 @@ export async function findCustomer(req, res) {
 export async function insertCustomer(req, res) {
     const { name, phone, cpf, birthday } = req.body;
 
-    const dateBirthday = dayjs(birthday).format('DD/MM/YYYY');
+    // const dateBirthday = dayjs(birthday).format('DD/MM/YYYY');
 
     // 
     try {
@@ -39,10 +39,10 @@ export async function insertCustomer(req, res) {
 
         db.query(
             `INSERT INTO customers (name, cpf, birthday, phone)
-             VALUES ('${name}', '${cpf}', '${dateBirthday}', '${phone}')`,
+             VALUES ('${name}', '${cpf}', '${birthday}', '${phone}')`,
         )
 
-        return res.status(201).send('ok!')
+        return res.status(201).send(birthday)
 
     } catch (err) {
         res.send(err.message)
