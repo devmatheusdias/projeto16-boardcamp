@@ -14,7 +14,7 @@ export async function listRentals(req, res){
 export async function insertRentals(req,res){
     const { customerId, gameId, daysRented } = req.body;
 
-    // 
+    
     try {
 
         const rentDate = dayjs(Date.now())
@@ -24,7 +24,7 @@ export async function insertRentals(req,res){
 
         if (customers.rows.length === 0) return res.status(400).send('Cliente não encontrado')
 
-        if (games.rows.length === 0) return res.status(400).send('Jogo não encontrado')
+        if (games.rows.length === 0 || games.rows[0].stockTotal <= 0) return res.status(400).send('Jogo não encontrado')
 
         db.query(`
             INSERT INTO rentals
@@ -33,7 +33,7 @@ export async function insertRentals(req,res){
             ('${customerId}', '${gameId}', '${rentDate}', '${daysRented}', null, '${daysRented * games.rows[0].pricePerDay}', null)
         `)
 
-        return res.status(201).send('ok!')
+        return res.status(201).send('ok')
 
     } catch (err) {
         res.send(err.message)
