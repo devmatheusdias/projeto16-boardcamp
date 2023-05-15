@@ -26,11 +26,11 @@ export async function findCustomer(req, res) {
 
         if (customer.rows.length === 0) return res.status(404).send('Cliente não encontrado')
 
-        // const customerObject = [...customer.rows]
+        const customersFilter = customer.rows.map(customer => {
+            return {...customer, birthday: dayjs(customer.birthday).format('YYYY-MM-DD')}
+        });
 
-        // customerObject.map(customer => customer.birthday = dayjs(customer.birthday).format('YYYY-MM-DD'))
-
-        res.send(customer.rows[0])
+        res.send(customersFilter)
     } catch (error) {
         res.send(error.message)
     }
