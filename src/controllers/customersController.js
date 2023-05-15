@@ -67,7 +67,7 @@ export async function updateCustomer(req, res) {
 
         const cpfConsult = await db.query(`SELECT * FROM customers WHERE cpf=$1;`, [cpf]);
 
-        if (cpfConsult.rows.length != 0) return res.status(409).send('Este CPF ja está cadastrado')
+        if (cpfConsult.rows.length != 0 && customer.rows[0].cpf != cpf) return res.status(409).send('Este CPF ja está cadastrado')
 
         db.query(`UPDATE customers SET name='${name}', cpf='${cpf}', phone='${phone}',birthday='${birthday}' WHERE id=$1;`, [id])
 
