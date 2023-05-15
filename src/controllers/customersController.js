@@ -38,8 +38,8 @@ export async function insertCustomer(req, res) {
         if (customer.rows.length != 0) return res.status(409).send('Este CPF ja está cadastrado')
 
         db.query(
-            `INSERT INTO customers (name, phone, cpf, birthday)
-             VALUES ('${name}', '${phone}', '${cpf}', '${dateBirthday}')`,
+            `INSERT INTO customers (name, cpf, birthday, phone)
+             VALUES ('${name}', '${cpf}', '${dateBirthday}', '${phone}')`,
         )
 
         return res.status(201).send('ok!')
