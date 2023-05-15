@@ -24,7 +24,7 @@ export async function insertRentals(req,res){
 
         if (customers.rows.length === 0) return res.status(400).send('Cliente não encontrado')
 
-        if (games.rows.length === 0 || games.rows[0].stockTotal <= 0) return res.status(400).send('Jogo não encontrado')
+        if (games.rows.length === 0) return res.status(400).send('Jogo não encontrado')
 
         db.query(`
             INSERT INTO rentals
